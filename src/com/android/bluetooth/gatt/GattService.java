@@ -590,7 +590,14 @@ public class GattService extends ProfileService {
                                 synchronized (mOnFoundResults) {
                                     mOnFoundResults.put(client, result);
                                 }
-                                app.callback.onFoundOrLost(true, result);
+                                app.callback.onFoundOrLost(
+                                true,
+                                result.getDevice().getAddress(),
+                                result.getRssi(),
+                                result.getScanRecord() != null
+                                ? result.getScanRecord().getBytes()
+                                : null
+                            );
                             }
                             if ((settings.getCallbackType() &
                                     ScanSettings.CALLBACK_TYPE_ALL_MATCHES) != 0) {
@@ -1137,7 +1144,15 @@ public class GattService extends ProfileService {
 
                     while (!mOnFoundResults.isEmpty()) {
                         ScanResult result = mOnFoundResults.get(client);
-                        app.callback.onFoundOrLost(false, result);
+                        app.callback.onFoundOrLost(
+                        false,
+                        result.getDevice().getAddress(),
+                        result.getRssi(),
+                        result.getScanRecord() != null
+                        ? result.getScanRecord().getBytes()
+                        : null
+                        );
+
                         synchronized (mOnFoundResults) {
                             mOnFoundResults.remove(client);
                         }
